@@ -41,18 +41,6 @@ bot.once('ready', async () => {
   //  );
 
   console.log('Bot started');
-
-  // Set timer for checking on predictions
- const interval = 1000 * 60;
-
-  const check = async () => {
-  
-  }
-
-  await check();
-  setInterval(async () => {
-    await check();
-  }, interval);
 });
 
 bot.on('interactionCreate', (interaction: Interaction) => {

@@ -13,10 +13,11 @@ export default new class openai {
         this.api = new OpenAIApi(config);
     }
 
-    async predict (input: string, instruction: string, model = 'text-davinci-edit-001'): Promise<any> {
+    async predict (input: string, instruction: string, temperature: number, model = 'text-davinci-edit-001'): Promise<any> {
         try {
             const { data } = await this.api.createEdit({
                 model,
+                temperature,
                 input,
                 instruction
             });
