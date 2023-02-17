@@ -1,8 +1,8 @@
 import { Discord, Slash, SlashOption, SlashChoice } from 'discordx';
-import { type CommandInteraction, ApplicationCommandOptionType, Embed } from 'discord.js';
+import { type CommandInteraction, ApplicationCommandOptionType } from 'discord.js';
 import openai from '../services/openai.js';
+import { encode, decode } from 'gpt-3-encoder';
 import { elipsis } from '../utils/format.js';
-import { previousDay } from 'date-fns';
 
 @Discord()
 class text {
@@ -12,9 +12,9 @@ class text {
           description: 'The input text to use as a starting point for the edit.',
           name: 'input',
           required: true,
-          type: ApplicationCommandOptionType.String,
+          type: ApplicationCommandOptionType.Attachment,
       })
-      input: string,
+      input: any,
 
       @SlashOption({
           description: 'The instruction that tells the model how to edit the prompt.',
@@ -55,13 +55,56 @@ class text {
       interaction: CommandInteraction,
   ) {
     try {
-        const source = `💬 Input: \`${elipsis(input)}\`\n🛠️ Instruction: \`${elipsis(instruction)}\`\n🌡️ Temperature: \`${temperature || 1.0}\``;
+        // Max amount of tokens we can process at once
+        const chunkLimit = 4000;
 
-        await interaction.reply(source + `\n\nWaiting for prediction...`);
+        const inputText = await(await fetch(input.attachment)).text();
+        const inputTextChunks: string[] = decode(encode(inputText))
+            .split(' ')
+            .reduce((acc: string[][], token: string, idx: number) => {
+                const chunkIdx = Math.floor(idx/chunkLimit);
 
-        const prediction = await openai.predict(input, instruction, temperature);
+                if (!acc[chunkIdx]) {
+                    acc[chunkIdx] = [];
+                }
 
-        await interaction.editReply(source + '\n\n' + 'Output: `' + prediction.text + '`');
+               acc[chunkIdx].push(token);
+
+               return acc;
+            }, []).map((chunk) => chunk.join(' '));
+
+        const outputTextChunks: string[] = [];
+
+        const source = `💬 Input: \`${elipsis(inputText)}\`\ [${input.attachment}]\n🛠️ Instruction: \`${elipsis(instruction)}\`\n🌡️ Temperature: \`${temperature || 1.0}\``;
+        await interaction.reply({
+            ephemeral: true,
+            content: source + `\n\n**Waiting for prediction...**`,
+            files: [
+                {
+                    attachment: process.cwd() + '/assets/wait.gif'
+                }
+            ]
+        });
+
+        for (const inputTextChunk of inputTextChunks) {
+            const { text: prediction } = await openai.predict(inputText, instruction, temperature);
+
+            outputTextChunks.push(prediction);
+
+            console.log(prediction);
+        }
+
+        const outputText = outputTextChunks.join(' ');
+
+        console.log(outputText);
+
+        await interaction.editReply({
+            content: source + '\n\n' + 'Output:',
+            files: [{
+                attachment: Buffer.from(outputText, 'utf8'),
+                name: 'output.txt'
+            }]
+        });
     }  catch (err) {
         console.error(err);
 
