@@ -1,1 +1,1 @@
-export const elipsis = (text, maxLength=250) => text.substring(0, maxLength - 3) + '...';
+export const elipsis = (text, maxLength=250) => text.substring(0, maxLength - 3) + (text.length > maxLength ? '...' : '');

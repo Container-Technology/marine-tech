@@ -108,7 +108,10 @@ class text {
     }  catch (err) {
         console.error(err);
 
-        await interaction.reply(`⚠️ Error: input text length must be under 4000 tokens`);
+        await interaction.reply({
+            ephemeral: true,
+            content: `⚠️ Error: input text length must be under 4000 tokens`
+        });
     }
   }
 }
