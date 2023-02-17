@@ -6,7 +6,7 @@
 		"rootDir": "src",
 		"strict": true,
 		"moduleResolution": "Node",
-    "baseUrl": ".",
+		"baseUrl": ".",
 		"allowSyntheticDefaultImports": true,
 
 		"experimentalDecorators": true,
@@ -17,6 +17,6 @@
 
 		"noImplicitAny": false
 	},
-	"include": ["src/**/*"],
-	"exclude": ["build", "node_modules"]
+	"include": ["src/**/*.ts"],
+	"exclude": ["build", "node_modules"],
 }

@@ -8,6 +8,8 @@
   "scripts": {
     "build": "tsc",
     "build:changelog": "npx @discordx/changelog --root=src",
+    "postbuild": "yarn copyAssets",
+    "copyAssets": "copyfiles --error --up 1 ./src/assets/wait.gif ./build",
     "dev": "env $(cat .env) ts-node-esm src/main.ts",
     "start": "node build/main.js",
     "watch": "env $(cat .env) nodemon --exec ts-node-esm src/main.ts"
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.11.7",
+    "copyfiles": "^2.4.1",
     "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",

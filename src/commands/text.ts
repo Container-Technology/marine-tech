@@ -3,6 +3,7 @@ import { type CommandInteraction, ApplicationCommandOptionType } from 'discord.j
 import openai from '../services/openai.js';
 import { encode, decode } from 'gpt-3-encoder';
 import { elipsis } from '../utils/format.js';
+import path from 'path';
 
 @Discord()
 class text {
@@ -77,11 +78,10 @@ class text {
 
         const source = `💬 Input: \`${elipsis(inputText)}\`\ [${input.attachment}]\n🛠️ Instruction: \`${elipsis(instruction)}\`\n🌡️ Temperature: \`${temperature || 1.0}\``;
         await interaction.reply({
-            ephemeral: true,
             content: source + `\n\n**Waiting for prediction...**`,
             files: [
                 {
-                    attachment: process.cwd() + '/assets/wait.gif'
+                    attachment: path.join(process.cwd(), 'build', 'assets', 'wait.gif')
                 }
             ]
         });
@@ -109,8 +109,8 @@ class text {
         console.error(err);
 
         await interaction.reply({
-            ephemeral: true,
-            content: `⚠️ Error: input text length must be under 4000 tokens`
+            content: `⚠️ Unknwon error, please contact sysop.`,
+            ephemeral: true
         });
     }
   }
