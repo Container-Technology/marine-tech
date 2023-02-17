@@ -55,7 +55,7 @@ class feed {
       interaction: CommandInteraction,
   ) {
     try {
-        const source = `Input: \`${elipsis(input)}\`\nInstruction: \`${elipsis(instruction)}\``;
+        const source = `Input: \`${elipsis(input)}\`\nInstruction: \`${elipsis(instruction)}\`\nTemperature: \`${temperature || 1.0}\``;
 
         await interaction.reply(source + `\n\nWaiting for prediction...`);
 
