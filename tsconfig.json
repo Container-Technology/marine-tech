@@ -17,6 +17,6 @@
 
 		"noImplicitAny": false
 	},
-	"include": ["src/**/*.ts"],
+	"include": ["src/**/*"],
 	"exclude": ["build", "node_modules"]
 }
