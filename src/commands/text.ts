@@ -56,6 +56,8 @@ class text {
       interaction: CommandInteraction,
   ) {
     try {
+        await interaction.deferReply();
+
         // Max amount of tokens we can process at once
         const chunkLimit = 4000;
 
@@ -76,8 +78,8 @@ class text {
 
         const outputTextChunks: string[] = [];
 
-        const source = `💬 Input: \`${elipsis(inputText)}\`\ [${input.attachment}]\n🛠️ Instruction: \`${elipsis(instruction)}\`\n🌡️ Temperature: \`${temperature || 1.0}\``;
-        await interaction.reply({
+        const source = `💬 Input: \`${elipsis(inputText, 800)}\`\ [${input.attachment}]\n🛠️ Instruction: \`${elipsis(instruction, 800)}\`\n🌡️ Temperature: \`${temperature || 1.0}\``;
+        await interaction.editReply({
             content: source + `\n\n**Waiting for prediction...**`,
             files: [
                 {
