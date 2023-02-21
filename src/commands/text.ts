@@ -55,11 +55,12 @@ class text {
 
       interaction: CommandInteraction,
   ) {
+    await interaction.deferReply();
+
     try {
-        await interaction.deferReply();
 
         // Max amount of tokens we can process at once
-        const chunkLimit = 4000;
+        const chunkLimit = 3950;
 
         const inputText = await(await fetch(input.attachment)).text();
         const inputTextChunks: string[] = decode(encode(inputText))
@@ -81,11 +82,11 @@ class text {
         const source = `💬 Input: \`${elipsis(inputText, 800)}\`\ [${input.attachment}]\n🛠️ Instruction: \`${elipsis(instruction, 800)}\`\n🌡️ Temperature: \`${temperature || 1.0}\``;
         await interaction.editReply({
             content: source + `\n\n**Waiting for prediction...**`,
-            files: [
+            /*files: [
                 {
                     attachment: path.join(process.cwd(), 'build', 'assets', 'wait.gif')
                 }
-            ]
+            ]*/
         });
 
         for (const inputTextChunk of inputTextChunks) {
@@ -110,9 +111,8 @@ class text {
     }  catch (err) {
         console.error(err);
 
-        await interaction.reply({
-            content: `⚠️ Unknwon error, please contact sysop.`,
-            ephemeral: true
+        await interaction.editReply({
+            content: `⚠️ Unknwon error, please contact sysop.`
         });
     }
   }
